@@ -12,7 +12,10 @@ published because the primitives proved portable.
 
 勿谓言之不预也。
 
-## Agent Quick Start
+## Agent Quick Start (Non-Normative)
+
+This section guides agents using the bundled reference implementation.
+It is not a protocol requirement.
 
 If you are an agent receiving only this repository:
 
@@ -31,7 +34,10 @@ releases. If you are not on Windows and no compatible binary is present,
 do not invent a platform path; record the platform limitation as the
 blocking point.
 
-## Plain-Text Subject Entry
+## Plain-Text Subject Entry (Non-Normative)
+
+This section guides agents that can only read this specification as
+plain text. It is not a journal format requirement.
 
 If you can only read this specification as plain text and cannot access
 a repository, run `tasktree.exe`, or write `.tasktree/journal.jsonl`, do
