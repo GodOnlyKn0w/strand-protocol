@@ -12,6 +12,86 @@ published because the primitives proved portable.
 
 勿谓言之不预也。
 
+## Agent Quick Start
+
+If you are an agent receiving only this repository:
+
+1. read the protocol;
+2. identify your boundary using the Boundary Rule below;
+3. on Windows, unpack the bundled tasktree release and locate the
+   `tasktree.exe` binary;
+4. run `tasktree.exe list`;
+5. run `tasktree.exe show <latest-open-strand>`;
+6. follow the latest `[open]`;
+7. if you get stuck, append what happened before trying a workaround.
+
+Current release boundary: the bundled reference binary is Windows-only.
+Other platform support is pending community contributions or future
+releases. If you are not on Windows and no compatible binary is present,
+do not invent a platform path; record the platform limitation as the
+blocking point.
+
+## Plain-Text Subject Entry
+
+If you can only read this specification as plain text and cannot access
+a repository, run `tasktree.exe`, or write `.tasktree/journal.jsonl`, do
+not fabricate journal events, strand ids, or timestamps.
+
+Your compliant action is to state the boundary and, if useful, propose
+an append in plain text. A proposed append is not part of the journal
+until a subject with write access appends it.
+
+Do not treat the chat transcript as a substitute journal. Plain-text
+simulation may help explain the protocol, but it does not create durable
+strand state. The next recoverable action should point to a subject that
+can access the repository and append to the journal.
+
+## Design Intent
+
+This protocol is not designed to prevent agents from making mistakes.
+It is designed to make mistakes recoverable and locatable.
+
+A successful implementation should make it possible to answer:
+
+- What was the agent trying to do?
+- What did it know at that point?
+- Where did it get stuck?
+- Which step or boundary produced the failure?
+
+## Boundary Rule
+
+Before acting, identify the effective boundary:
+
+1. Which repository am I in?
+2. Which subject am I acting as?
+3. What files and tools does this subject actually have?
+4. What information must not be assumed across this boundary?
+
+Do not assume tools, history, or governance rules are available unless
+the current subject can directly invoke them.
+
+## Success Criterion
+
+The protocol succeeds when an agent with only this repository and the
+tasktree release can recover working state from files alone.
+
+In the simplest useful case: five lines, one strand, full session
+record — problem, decision, progress, recovery point.
+
+The standard is not perfect agent behavior. The standard is whether a
+later agent can recover the working state from files alone and locate
+where a failure occurred.
+
+## Failure Is Evidence
+
+A failed command, wrong assumption, confused handoff, or crossed
+information boundary is not outside the protocol. It is one of the main
+inputs.
+
+When an agent misreads a task or resumes the wrong strand, the protocol
+should preserve enough context for a later agent to identify the failure
+point in the strand history.
+
 ## 1. Overview
 
 Strand is a protocol for **cognitive external memory** — persisting
@@ -19,13 +99,16 @@ and recovering reasoning context across AI sessions, tools, and models.
 
 It defines three primitives and one storage format. That is all.
 
+A strand is a view projected from append-only journal events, not a
+separate stored object. See §6 for the projection rules.
+
 ### 1.1 Three Primitives
 
 | Primitive | Verb | Definition |
 |-----------|------|-----------|
 | **strand** | contains | A named causal line — groups reasoning about one topic into a traversable sequence |
 | **append** | records | An atomic reasoning increment — one thought, one record |
-| **[open]** | points | A recovery marker — where the next session should resume |
+| **[open]** | hands off | A recovery marker — where the next session should resume |
 
 ### 1.2 What This Protocol Is NOT
 
@@ -33,6 +116,10 @@ It defines three primitives and one storage format. That is all.
 - **Not a state machine.** Strands have no enforced lifecycle.
 - **Not a workflow engine.** No automation, no triggers, no pipelines.
 - **Not a database.** No query language, no indexing, no transactions.
+- **Not a compliance checklist.** The protocol does not replace judgment
+  with fields to fill out.
+- **Not a governance stack.** It does not require external governance
+  documents, project histories, or central coordination.
 
 It is a scratchpad. It persists. That is all.
 
@@ -41,7 +128,7 @@ It is a scratchpad. It persists. That is all.
 tasktree is the Windows reference implementation of this protocol.
 Current version: v0.1.0.
 
-[GitHub Releases](https://github.com/GodOnlyKn0w/tasktree/releases)
+[GitHub Releases](https://github.com/GodOnlyKn0w/strand-protocol/releases)
 
 Other platform support is pending community contributions or future releases.
 
@@ -53,6 +140,9 @@ Other platform support is pending community contributions or future releases.
 
 A strand is a **topic-bound causal line**. All appends within a strand
 share a common subject. Strands are causally independent of each other.
+
+A strand is projected from journal events at read time. It is not stored
+as a separate file or database row. See §6.
 
 ### 2.2 Identity
 
@@ -85,6 +175,11 @@ different strands.
 When a strand exceeds this boundary, the final append is `[open]`
 pointing to a new strand. The new strand begins with an append
 referencing the old strand.
+
+Example: "testing a repo entry point" and "reflecting on this agent's
+mistake while testing it" are related, but they are different cognitive
+objects. They belong in different strands, with an append linking the
+relationship when needed.
 
 ### 2.5 Strand Independence
 
@@ -145,7 +240,20 @@ continue without reading prior history:
 | **Last-position visibility** | Always the final append of an active strand |
 | **Cross-model** | Plain text, readable by any model at any capability level |
 
-### 4.4 Non-Guarantees
+### 4.4 Concurrency and Asynchrony
+
+`[open]` has two roles:
+
+- **Attention concurrency:** multiple strands may be open at the same
+  time. Listing them shows the agent which cognitive lines can be
+  resumed.
+- **Recoverable asynchrony:** a strand can be resumed later by another
+  session, model, or agent because the handoff is stored in plain text.
+
+This protocol does not schedule work or run agents in parallel. It only
+makes multiple unfinished cognitive lines visible and resumable.
+
+### 4.5 Non-Guarantees
 
 - `[open]` does not trigger automatic action. It is a signpost.
 - `[open]` does not guarantee freshness. The agent must validate.
@@ -286,8 +394,11 @@ Agents often prefix appends with semantic markers:
 | `[progress]` | A completed action or verified result |
 | `[observation]` | A discovered pattern |
 | `[correction]` | Fixing a previous misunderstanding |
-| `[open]` | Recovery point for next session |
 | `[done]` | Explicit strand closure |
+
+`[open]` is not a non-normative prefix. It is the normative recovery
+primitive defined in §4. It appears inside append content, but its role
+is stronger than the optional reading hints above.
 
 ### 7.2 First Append Convention
 
@@ -302,7 +413,11 @@ and has no recovery point.
 
 ---
 
-## 8. Compliance
+## 8. Implementation Compliance
+
+This section is for implementers of compatible tools. If you are an
+agent using an existing tasktree release, §1-§7 are the operational
+path; you do not need this section to start.
 
 ### 8.1 Minimum Compliance
 
