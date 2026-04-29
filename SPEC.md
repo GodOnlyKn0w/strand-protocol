@@ -127,8 +127,8 @@ separate stored object. See §6 for the projection rules.
 - **Not a governance stack.** It does not require external governance
   documents, project histories, or central coordination.
 
-These are not omissions. Judgment belongs to the agent. The protocol
-records the trace of judgment, not the judgment itself.
+These are not omissions. Judgment belongs to the agent.
+The protocol records the trace of judgment; it does not define the judgment itself.
 
 It is a scratchpad. It persists. That is all.
 
