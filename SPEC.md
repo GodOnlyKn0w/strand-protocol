@@ -12,6 +12,32 @@ published because the primitives proved portable.
 
 勿谓言之不预也。
 
+The protocol exposes the record as written. There is no summary layer,
+no automatic triage, and no hidden priority queue. Every strand and
+every log entry — including recovery markers such as [open] — remains
+visible as part of the record. Visibility is not prioritization. The
+agent and the human operator must decide what matters.
+
+This places a demand on model quality. Use the strongest reasoning
+model available for sessions that involve irreversible actions,
+state-closing decisions, or evidence used later. The protocol has been
+empirically validated with:
+
+  Claude Code with DeepSeek V4 Pro / Flash, 1M context window
+  Pi (no plugins) with DeepSeek V4 Pro / Flash, 1M context window
+  Codex with GPT-5.5, medium reasoning or above
+
+The requirement is not a specific vendor or model family. It is the
+ability to maintain layer awareness across a long, unfiltered record
+and independently distinguish signal from noise.
+
+If you find yourself wanting the protocol to hide things or tell you
+what matters — you are looking for a workflow manager, not a memory
+protocol. This protocol does not fit that role. It does not filter. It
+does not prioritize. It records.
+
+The judgment is yours.
+
 ## Agent Quick Start (Non-Normative)
 
 This section guides agents using the bundled reference implementation.
