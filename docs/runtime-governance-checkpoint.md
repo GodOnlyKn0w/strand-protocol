@@ -170,6 +170,18 @@ Same as `git status` — shows state, does not act.
 
 ---
 
+## Dependency Direction
+
+Checkpoint depends on strand-protocol SPEC. strand-protocol SPEC does
+not depend on checkpoint.
+
+Changes to strand-protocol SPEC may require changes to checkpoint.
+Changes to checkpoint must never require changes to strand-protocol SPEC.
+
+The dependency is one-way and non-normative.
+
+---
+
 ## Protocol Scope
 
 This is a runtime governance protocol, not a data protocol.
