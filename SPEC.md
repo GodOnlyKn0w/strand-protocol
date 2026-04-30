@@ -38,6 +38,12 @@ does not prioritize. It records.
 
 The judgment is yours.
 
+The protocol exposes complexity honestly. It does not hide, summarize,
+or triage. Models and operators without the judgment to navigate raw
+records will get lost in the details.
+
+That is not a bug.
+
 ## Agent Quick Start (Non-Normative)
 
 This section guides agents using the bundled reference implementation.
