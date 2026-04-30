@@ -2,6 +2,9 @@
 
 ## Runtime Governance Checkpoint
 
+This project follows [checkpoint-profile](../docs/checkpoint-profile.md).
+Tasktree binding: [tasktree-checkpoint-binding](../docs/tasktree-checkpoint-binding.md).
+
 Before destructive action:
 1. Run `tasktree list`
 2. Run `tasktree show <relevant-strand>`

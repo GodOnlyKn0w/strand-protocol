@@ -1,4 +1,4 @@
-# Runtime Governance Checkpoint
+# Checkpoint Profile
 
 status: Operating Profile
 version: 2.0
@@ -26,14 +26,13 @@ decide whether the action is correct.
 v1.0 solved "forgot to look."
 v2.0 solves "looked but ignored."
 
-Four patches, tested against real agent failure (arch35 deletion →
-premature closure):
+Four patches, tested against real agent failure:
 
 1. **Post-action verification gate.** Before state-closing, run a
    verification command with no causal link to the fix.
 2. **`[open]` processing gate.** Unresolved `[open]` in current strand
    blocks state convergence.
-3. **Cross-system scope.** File/strand conflict triggers git/filesystem
+3. **Cross-system scope.** File/strand conflict triggers filesystem
    check.
 4. **`[done]` preconditions.** Minimum gate: no open `[open]`,
    verification done, results appended.
@@ -42,33 +41,32 @@ premature closure):
 
 ## Trigger Conditions
 
-**Pre-action** (retained from v1.0):
+**Pre-action:**
 - Destructive operations (delete, move, bulk rename, overwrite)
 - State-closing operations (marking resolved, verified, done)
 - File/strand conflict detected
 - Execution context may have aged past new constraints
 
-**Post-action** (new in v2.0):
+**Post-action:**
 - Before any state-closing action, run at least one orthogonal
   verification command
 
 ---
 
-## Checkpoint Actions
+## Actions
 
 ### Pre-action
 
-```
-tasktree list
-tasktree show <relevant strand>
-```
+Re-read the current strand head and list all active strands.
+If new constraints are found, incorporate them before proceeding.
 
 ### Pre-state-closing
 
 1. **Acknowledge `[open]` markers.**
 
-   If `tasktree show` reveals an `[open]`, it MUST be acknowledged before
-   proceeding. Acknowledged means: append what you decided to do with it.
+   If the current strand contains an `[open]`, it MUST be acknowledged
+   before proceeding. Acknowledged means: append what you decided to do
+   with it.
 
    Continue, defer, or hand off — all are valid. Ignoring is not.
 
@@ -84,9 +82,9 @@ tasktree show <relevant strand>
 3. **Append verification result before `[done]`.**
 
 4. **Expand scope on conflict.** Check in order:
-   - `tasktree list` / `show` — strand state
-   - `git status` — file state
-   - Compare: strand says done, git doesn't reflect → conflict →
+   - Strand state
+   - File state
+   - Compare: strand says done, filesystem doesn't reflect → conflict →
      must not proceed → append conflict description
 
 ---
@@ -119,54 +117,12 @@ All three lines required. Missing any line = incomplete closure.
 
 ---
 
-## Summary
-
-**Before destructive action:**
-```
-tasktree list
-tasktree show <relevant strand>
-```
-
-**Before `[done]`:**
-1. Acknowledge all blocking `[open]` in current strand
-2. Run at least one orthogonal verification command
-3. If verification fails → append `[friction]`, never "checkpoint ok"
-4. If verification passes → append checkpoint declaration with result
-5. Write `[done]` using the three-line template
-
----
-
 ## Boundary
 
 Checkpoint records the agent's observed context before action. It does
 not decide whether the action is correct. Verification commands that
 pass are evidence. Those that fail are also evidence. Both are appended.
 Neither is a veto.
-
----
-
-## CLI Outlook (not P0 — wait for real friction)
-
-```
-$ tasktree checkpoint <strand_id>
-
-strand state:
-  entries: 34
-  last: [open] "waiting for real task"
-  open markers: 1 unresolved
-
-git state:
-  modified: docs/runtime-governance-checkpoint.md
-  untracked: none
-
-verification template:
-  [done] verified: <command + output>
-         no open: <confirmed or skip-reason>
-         result appended: <strand_id>
-```
-
-Read-only diagnostics. No judgment. No auto-append.
-Same as `git status` — shows state, does not act.
 
 ---
 
@@ -184,15 +140,19 @@ The dependency is one-way and non-normative.
 
 ## Protocol Scope
 
-This is a runtime governance protocol, not a data protocol.
-It operates at the tasktree usage layer, not the SPEC layer.
+This is a runtime governance profile, not a data protocol.
+It defines what to check and why, not how to invoke a specific tool.
 It does not modify journal format, strand primitives, or `[open]`
 semantics.
+
+For tool-specific bindings (e.g. tasktree CLI commands), see the
+examples/ directory. A runtime binding maps profile actions to
+concrete invocations for a given implementation.
 
 ---
 
 ## Origin
 
-arch35 deletion incident. Three checkpoint attempts, each did a re-read,
-each saw `[open]` — and proceeded anyway. v1.0 solved "forgot to look."
-v2.0 solved "looked but ignored."
+Deletion incident. Three checkpoint attempts in succession — each
+did a re-read, each saw `[open]` — and proceeded to close anyway.
+v1.0 solved "forgot to look." v2.0 solved "looked but ignored."
