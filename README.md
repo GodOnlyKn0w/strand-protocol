@@ -4,9 +4,9 @@ Start with [SPEC.md](SPEC.md).
 
 ## Reference Implementation
 
-Current release: [tasktree v0.1.1](https://github.com/GodOnlyKn0w/strand-protocol/releases/tag/v0.1.1)
+Current release: [tasktree v0.1.2](https://github.com/GodOnlyKn0w/strand-protocol/releases/tag/v0.1.2)
 
-Windows binary: [tasktree-v0.1.1-windows.zip](https://github.com/GodOnlyKn0w/strand-protocol/releases/download/v0.1.1/tasktree-v0.1.1-windows.zip)
+Windows binary: [tasktree-v0.1.2-windows.zip](https://github.com/GodOnlyKn0w/strand-protocol/releases/download/v0.1.2/tasktree-v0.1.2-windows.zip)
 
 Canonical repository: https://github.com/GodOnlyKn0w/strand-protocol
 

@@ -167,7 +167,7 @@ It is a scratchpad. It persists. That is all.
 ### 1.3 Reference Implementation
 
 tasktree is the Windows reference implementation of this protocol.
-Current version: v0.1.1.
+Current version: v0.1.2.
 
 [GitHub Releases](https://github.com/GodOnlyKn0w/strand-protocol/releases)
 
