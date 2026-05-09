@@ -167,7 +167,7 @@ It is a scratchpad. It persists. That is all.
 ### 1.3 Reference Implementation
 
 tasktree is the Windows reference implementation of this protocol.
-Current version: v0.1.2.
+Current version: v0.1.4.
 
 [GitHub Releases](https://github.com/GodOnlyKn0w/strand-protocol/releases)
 
@@ -318,6 +318,26 @@ directory. (The directory is named after the reference implementation.)
 
 Each line is a valid JSON object. No cross-line dependencies. No
 trailing commas. No multi-line records.
+
+### 5.2b Causal Order
+
+Journal line position is the canonical causal order. The `ts` field is
+observational metadata recorded at write time. It is used for display
+and diagnostics only.
+
+```
+causal coordinate = journal line number (0-indexed)
+                     ↑
+                     append-order, not wall-clock
+```
+
+When two events' timestamps contradict their line positions (a later
+line has an earlier `ts`), the line order wins. Timestamps are not
+ordering authority.
+
+Offset references (`ack_offset`, `state_offset`, `dispatch_offset`)
+are valid only within one uninterrupted journal lineage. Truncation
+or rebuild invalidates all offset references.
 
 ### 5.3 Required Events
 
